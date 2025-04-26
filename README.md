@@ -7,7 +7,7 @@ Built to be tablet-friendly and glanceable, while still powerful for daily use.
 
 ## ✨ Features
 
-- **Beautiful minimalistic design** using the [Swakes Theme](https://github.com/Swakes/homeassistant-swakes-theme)
+- **Beautiful minimalistic design** using the [Swakes Theme](https://github.com/pqpxo/SWAKES_hassio)
 - **Custom vertical-stack layout** to organise quick controls, statuses, and calendar
 - **Fully responsive** for tablets, laptops, and wall panels
 - **Real-time Smart Home Controls**:
@@ -36,7 +36,7 @@ Built to be tablet-friendly and glanceable, while still powerful for daily use.
 
 - Using the **Swakes** Theme for Home Assistant
 - Highly recommended for matching colours, styling, and clean UI
-- 👉 [View the Swakes Theme Here](https://github.com/Swakes/homeassistant-swakes-theme)
+- 👉 [View the Swakes Theme Here](https://github.com/pqpxo/SWAKES_hassio)
 
 ---
 
