@@ -1,0 +1,2410 @@
+views:
+  - type: sections
+    max_columns: 3
+    title: Home
+    path: home
+    icon: mdi:home
+    theme: swakes
+    sections:
+      - type: grid
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: custom:mod-card
+                card_mod:
+                  style: |
+                    :host {
+                      display: flex;
+                      justify-content: left;
+                    }
+                card:
+                  type: custom:button-card
+                  tap_action:
+                    action: none
+                  styles:
+                    card:
+                      - height: 5px
+                      - width: 1220px
+                      - background-color: '#35425c'
+                      - border-radius: 50px
+                      - box-shadow: none
+                      - padding: 0
+                      - pointer-events: none
+                      - margin-bottom: 8px
+                      - margin-top: 8px
+        column_span: 3
+      - type: grid
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: horizontal-stack
+                cards:
+                  - type: markdown
+                    content: >
+                      {% set hour = now().hour %}
+
+                      {% if hour < 12 %}
+                        🌤 **Good morning!**  
+                      {% elif hour < 18 %}
+                        ☀️ **Good afternoon!**  
+                      {% else %}
+                        🌙 **Good evening!**  
+                      {% endif %}
+
+                      <div style="font-size: 14px; font-weight: 400; opacity:
+                      0.6; margin-top: 4px;">
+                        {{ now().strftime('%d %B %Y') }}<br><br>{{ now().strftime('%H:%M') }}
+                      </div>
+                    text_only: true
+                    card_mod:
+                      style: |
+                        ha-card {
+                          background: rgba(255, 255, 255, 0.05);
+                          border-radius: 14px;
+                          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+                          padding: 0px;
+                          margin-top: 20px;
+                          font-size: 26px;
+                          font-weight: normal;
+                          text-align: center;
+                          color: var(--primary-text-color);
+                        }
+                  - type: custom:button-card
+                    entity: device_tracker.location
+                    show_name: false
+                    show_state: false
+                    show_icon: false
+                    styles:
+                      card:
+                        - background: none
+                        - box-shadow: none
+                        - border-radius: 0px
+                        - padding: 0
+                        - height: 150px
+                        - width: 150px
+                        - overflow: hidden
+                      custom_fields:
+                        image:
+                          - height: 150px
+                          - width: 150px
+                    custom_fields:
+                      image: |
+                        [[[
+                          const carHome = states['device_tracker.location']?.state === 'home';
+                          const lewisHome = states['person.lewis']?.state === 'home';
+                          const stephHome = states['person.steph']?.state === 'home';
+
+                          const showWithCar = carHome || (lewisHome && stephHome);
+                          const src = showWithCar
+                            ? '/local/dashboardicons/house-with-car.png'
+                            : '/local/dashboardicons/house-without-car.png';
+
+                          return `<img src="${src}" style="width: 100%; height: 100%; object-fit: cover;" />`;
+                        ]]]
+              - type: horizontal-stack
+                cards:
+                  - type: custom:mushroom-person-card
+                    entity: person.lewis
+                    icon_type: entity-picture
+                    card_mod:
+                      style: |
+                        ha-card {
+                          background: rgba(255, 255, 255, 0.05);
+                          border-radius: 14px;
+                          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+                          padding: 10px 16px !important;
+                          max-height: 70px;
+                        }
+                  - type: custom:mushroom-person-card
+                    entity: person.steph
+                    icon_type: entity-picture
+                    card_mod:
+                      style: |
+                        ha-card {
+                          background: rgba(255, 255, 255, 0.05);
+                          border-radius: 14px;
+                          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+                          padding: 10px 16px !important;
+                          max-height: 70px;
+                        }
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    name: Lewis's iPhone
+                    entity: sensor.iphone_battery_level
+                    show_state: false
+                    show_name: true
+                    show_icon: false
+                    show_entity_picture: true
+                    entity_picture: /local/dashboardicons/iphone15promaxnew.png
+                    custom_fields:
+                      battery: |
+                        [[[
+                          const level = parseInt(entity.state);
+                          const charging = states['sensor.iphone_battery_state']?.state === 'Charging';
+                          let icon = "mdi:battery";
+                          let color = "#F44336"; // Default red
+
+                          if (charging) {
+                            if (level > 90) icon = "mdi:battery-charging";
+                            else if (level > 80) icon = "mdi:battery-charging-90";
+                            else if (level > 70) icon = "mdi:battery-charging-80";
+                            else if (level > 60) icon = "mdi:battery-charging-70";
+                            else if (level > 50) icon = "mdi:battery-charging-60";
+                            else if (level > 40) icon = "mdi:battery-charging-50";
+                            else if (level > 30) icon = "mdi:battery-charging-40";
+                            else if (level > 20) icon = "mdi:battery-charging-30";
+                            else icon = "mdi:battery-charging-20";
+
+                            color = "#4CAF50"; // Green when charging
+                          } else {
+                            if (level > 90) { icon = "mdi:battery"; color = "#4CAF50"; }
+                            else if (level > 80) { icon = "mdi:battery-90"; color = "#4CAF50"; }
+                            else if (level > 70) { icon = "mdi:battery-80"; color = "#8BC34A"; }
+                            else if (level > 60) { icon = "mdi:battery-70"; color = "#CDDC39"; }
+                            else if (level > 50) { icon = "mdi:battery-60"; color = "#FFEB3B"; }
+                            else if (level > 40) { icon = "mdi:battery-50"; color = "#FFC107"; }
+                            else if (level > 30) { icon = "mdi:battery-40"; color = "#FF9800"; }
+                            else if (level > 20) { icon = "mdi:battery-30"; color = "#FF5722"; }
+                            else if (level > 10) { icon = "mdi:battery-20"; color = "#F44336"; }
+                            else { icon = "mdi:battery-10"; color = "#D32F2F"; }
+                          }
+
+                          return `<div style="display: flex; align-items: center;">
+                                    <ha-icon icon="${icon}" style="width: 20px; height: 20px; color: ${color}; margin-right: 6px;"></ha-icon>
+                                    <span style="font-size: 14px; color: var(--secondary-text-color);">${level}%</span>
+                                  </div>`;
+                        ]]]
+                    styles:
+                      grid:
+                        - grid-template-areas: '"i n" "i battery"'
+                        - grid-template-columns: 50px auto
+                        - grid-template-rows: auto auto
+                        - gap: 2px 10px
+                      card:
+                        - background-color: rgba(255, 255, 255, 0.05)
+                        - border-radius: 14px
+                        - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                        - padding: 10px 16px
+                        - height: 70px
+                      name:
+                        - justify-self: start
+                        - font-weight: bold
+                        - font-size: 14px
+                        - color: var(--primary-text-color)
+                      custom_fields.battery:
+                        - align-self: center
+                        - justify-self: start
+                        - padding-top: 2px
+                      entity_picture:
+                        - width: 50px
+                        - height: 50px
+                        - border-radius: 10px
+                      img_cell:
+                        - justify-content: start
+                        - align-self: center
+                  - type: custom:button-card
+                    name: Steph's iPhone
+                    entity: sensor.stephs_iphone_pro_battery_level
+                    show_state: false
+                    show_name: true
+                    show_icon: false
+                    show_entity_picture: true
+                    entity_picture: /local/dashboardicons/iphone14promax.png
+                    custom_fields:
+                      battery: |
+                        [[[
+                          const level = parseInt(entity.state);
+                          const charging = states['sensor.stephs_iphone_pro_battery_state']?.state === 'Charging';
+                          let icon = "mdi:battery";
+                          let color = "#F44336"; // Default red
+
+                          if (charging) {
+                            if (level > 90) icon = "mdi:battery-charging";
+                            else if (level > 80) icon = "mdi:battery-charging-90";
+                            else if (level > 70) icon = "mdi:battery-charging-80";
+                            else if (level > 60) icon = "mdi:battery-charging-70";
+                            else if (level > 50) icon = "mdi:battery-charging-60";
+                            else if (level > 40) icon = "mdi:battery-charging-50";
+                            else if (level > 30) icon = "mdi:battery-charging-40";
+                            else if (level > 20) icon = "mdi:battery-charging-30";
+                            else icon = "mdi:battery-charging-20";
+
+                            color = "#4CAF50"; // Green when charging
+                          } else {
+                            if (level > 90) { icon = "mdi:battery"; color = "#4CAF50"; }
+                            else if (level > 80) { icon = "mdi:battery-90"; color = "#4CAF50"; }
+                            else if (level > 70) { icon = "mdi:battery-80"; color = "#8BC34A"; }
+                            else if (level > 60) { icon = "mdi:battery-70"; color = "#CDDC39"; }
+                            else if (level > 50) { icon = "mdi:battery-60"; color = "#FFEB3B"; }
+                            else if (level > 40) { icon = "mdi:battery-50"; color = "#FFC107"; }
+                            else if (level > 30) { icon = "mdi:battery-40"; color = "#FF9800"; }
+                            else if (level > 20) { icon = "mdi:battery-30"; color = "#FF5722"; }
+                            else if (level > 10) { icon = "mdi:battery-20"; color = "#F44336"; }
+                            else { icon = "mdi:battery-10"; color = "#D32F2F"; }
+                          }
+
+                          return `<div style="display: flex; align-items: center;">
+                                    <ha-icon icon="${icon}" style="width: 20px; height: 20px; color: ${color}; margin-right: 6px;"></ha-icon>
+                                    <span style="font-size: 14px; color: var(--secondary-text-color);">${level}%</span>
+                                  </div>`;
+                        ]]]
+                    styles:
+                      grid:
+                        - grid-template-areas: '"i n" "i battery"'
+                        - grid-template-columns: 50px auto
+                        - grid-template-rows: auto auto
+                        - gap: 2px 10px
+                      card:
+                        - background-color: rgba(255, 255, 255, 0.05)
+                        - border-radius: 14px
+                        - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                        - padding: 10px 16px
+                        - height: 70px
+                      name:
+                        - justify-self: start
+                        - font-weight: bold
+                        - font-size: 14px
+                        - color: var(--primary-text-color)
+                      custom_fields.battery:
+                        - align-self: center
+                        - justify-self: start
+                        - padding-top: 2px
+                      entity_picture:
+                        - width: 50px
+                        - height: 50px
+                        - border-radius: 10px
+                      img_cell:
+                        - justify-content: start
+                        - align-self: center
+              - type: custom:mod-card
+                card_mod:
+                  style: |
+                    :host {
+                      display: flex;
+                      justify-content: center;
+                    }
+                card:
+                  type: custom:button-card
+                  tap_action:
+                    action: none
+                  styles:
+                    card:
+                      - height: 5px
+                      - width: 380px
+                      - background-color: '#35425c'
+                      - border-radius: 50px
+                      - box-shadow: none
+                      - padding: 0
+                      - pointer-events: none
+                      - margin-bottom: 4px
+                      - margin-top: 4px
+              - show_current: false
+                show_forecast: true
+                type: weather-forecast
+                entity: weather.forecast_home
+                name: ### NAME OF WEATHER
+                forecast_type: daily
+                forecast_slots: 5
+                card_mod:
+                  style: |
+                    ha-card {
+                      background-color: rgba(255, 255, 255, 0.05);
+                      border-radius: 14px;
+                      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+                      padding: 12px 20px;
+                      color: var(--primary-text-color);
+                    }
+                    div.now div:nth-child(2) {
+                      font-size: 10px !important;
+                      font-weight: 400 !important;
+                      opacity: 0.7 !important;
+                    }
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    name: Grass<br>Pollen
+                    entity: sensor.kleenex_pollen_radar_home_grass_level
+                    show_state: false
+                    show_name: true
+                    show_icon: true
+                    icon: mdi:flower-pollen
+                    show_label: false
+                    styles:
+                      grid:
+                        - grid-template-areas: '"i n" "i s"'
+                        - grid-template-columns: 45%
+                        - grid-template-rows: auto auto
+                        - gap: 2px 0px
+                      card:
+                        - background-color: rgba(255, 255, 255, 0.05)
+                        - border-radius: 14px
+                        - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                        - padding: 10px 16px
+                        - height: 70px
+                      name:
+                        - justify-self: start
+                        - padding-top: 3px
+                        - font-weight: bold
+                        - font-size: 16px
+                        - color: var(--primary-text-color)
+                      state:
+                        - justify-self: start
+                        - font-weight: 400
+                        - font-size: 14px
+                        - color: var(--secondary-text-color)
+                      icon:
+                        - width: 32px
+                        - height: 32px
+                        - color: |
+                            [[[
+                              const level = entity.state.toLowerCase();
+                              if (level === 'low') return '#4CAF50';         // Green
+                              if (level === 'moderate') return '#FFC107';    // Amber
+                              if (level === 'high') return '#FF5722';        // Orange
+                              if (level === 'very-high') return '#F44336';   // Red
+                              return 'white';                                // Default fallback
+                            ]]]
+                      img_cell:
+                        - justify-content: start
+                        - align-self: center
+                  - type: custom:button-card
+                    name: Tree<br>Pollen
+                    entity: sensor.kleenex_pollen_radar_home_trees_level
+                    show_state: false
+                    show_name: true
+                    show_icon: true
+                    icon: mdi:flower-pollen
+                    show_label: false
+                    styles:
+                      grid:
+                        - grid-template-areas: '"i n" "i s"'
+                        - grid-template-columns: 45%
+                        - grid-template-rows: auto auto
+                        - gap: 2px 0px
+                      card:
+                        - background-color: rgba(255, 255, 255, 0.05)
+                        - border-radius: 14px
+                        - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                        - padding: 10px 16px
+                        - height: 70px
+                      name:
+                        - justify-self: start
+                        - padding-top: 3px
+                        - font-weight: bold
+                        - font-size: 16px
+                        - color: var(--primary-text-color)
+                      state:
+                        - justify-self: start
+                        - font-weight: 400
+                        - font-size: 14px
+                        - color: var(--secondary-text-color)
+                      icon:
+                        - width: 32px
+                        - height: 32px
+                        - color: |
+                            [[[
+                              const level = entity.state.toLowerCase();
+                              if (level === 'low') return '#4CAF50';         // Green
+                              if (level === 'moderate') return '#FFC107';    // Amber
+                              if (level === 'high') return '#FF5722';        // Orange
+                              if (level === 'very-high') return '#F44336';   // Red
+                              return 'white';                                // Fallback
+                            ]]]
+                      img_cell:
+                        - justify-content: start
+                        - align-self: center
+                  - type: custom:button-card
+                    name: Weed<br>Pollen
+                    entity: sensor.kleenex_pollen_radar_home_weeds_level
+                    show_state: false
+                    show_name: true
+                    show_icon: true
+                    icon: mdi:flower-pollen
+                    show_label: false
+                    styles:
+                      grid:
+                        - grid-template-areas: '"i n" "i s"'
+                        - grid-template-columns: 45%
+                        - grid-template-rows: auto auto
+                        - gap: 2px 0px
+                      card:
+                        - background-color: rgba(255, 255, 255, 0.05)
+                        - border-radius: 14px
+                        - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                        - padding: 10px 16px
+                        - height: 70px
+                      name:
+                        - justify-self: start
+                        - padding-top: 3px
+                        - font-weight: bold
+                        - font-size: 16px
+                        - color: var(--primary-text-color)
+                      state:
+                        - justify-self: start
+                        - font-weight: 400
+                        - font-size: 14px
+                        - color: var(--secondary-text-color)
+                      icon:
+                        - width: 32px
+                        - height: 32px
+                        - color: |
+                            [[[
+                              const level = entity.state.toLowerCase();
+                              if (level === 'low') return '#4CAF50';         // Green
+                              if (level === 'moderate') return '#FFC107';    // Amber
+                              if (level === 'high') return '#FF5722';        // Orange
+                              if (level === 'very-high') return '#F44336';   // Red
+                              return 'white';                                // Fallback
+                            ]]]
+                      img_cell:
+                        - justify-content: start
+                        - align-self: center
+              - type: custom:button-card
+                entity: sensor.next_bin_collection
+                show_icon: false
+                show_state: false
+                layout: horizontal
+                styles:
+                  grid:
+                    - grid-template-areas: '"n i"'
+                    - grid-template-columns: 1fr auto
+                    - align-items: center
+                  card:
+                    - background-color: rgba(255, 255, 255, 0.05)
+                    - border-radius: 14px
+                    - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                    - padding: 10px 16px
+                    - height: 70px
+                  name:
+                    - justify-self: center
+                    - text-align: center
+                    - color: var(--primary-text-color)
+                custom_fields:
+                  i: |
+                    [[[
+                      const icons = entity.attributes.bin_icons || [];
+                      return icons.map(icon => `<img src="${icon}" style="height: 55px; margin-left: 6px;">`).join('');
+                    ]]]
+                name: |
+                  [[[
+                    const state = entity.state || '';
+                    const parts = state.split(': ');
+                    if (parts.length === 2) {
+                      const dayPart = parts[0].trim().toLowerCase();
+                      let dayLabel = parts[0];
+
+                      if (dayPart === 'in 0 days') {
+                        dayLabel = 'Today';
+                      } else if (dayPart === 'in 1 day') {
+                        dayLabel = 'Tomorrow';
+                      }
+
+                      return `
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                          <span style="font-weight: 700; font-size: 18px; letter-spacing: -1.02px; color: var(--primary-text-color);">${dayLabel}:</span>
+                          <span style="font-weight: 400; font-size: 16px; letter-spacing: -1.02px; margin-top: 2px; color: var(--secondary-text-color);">${parts[1]}</span>
+                        </div>
+                      `;
+                    } else {
+                      return state;
+                    }
+                  ]]]
+          - type: custom:bubble-card
+            card_type: pop-up
+            hash: '#kitchen'
+            name: Security
+            icon: mdi:video
+            trigger_entity: binary_sensor.fridge_door_contact
+            trigger_state: 'on'
+            trigger_close: true
+        column_span: 1
+      - type: grid
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: markdown
+                content: >-
+                  **Quick Controls**  
+
+                  <div style="font-size: 14px; font-weight: 400; opacity: 0.6;
+                  margin-top: 4px;">
+                text_only: true
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: rgba(255, 255, 255, 0.05);
+                      border-radius: 14px;
+                      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+                      padding-top: 10px;
+                      margin-top: 0px;
+                      margin-bottom: -10px;
+                      font-size: 26px;
+                      font-weight: normal;
+                      text-align: center;
+                      width: 150px
+                      color: var(--primary-text-color);
+                    }
+              - type: horizontal-stack
+                cards:
+                  - type: custom:mushroom-climate-card
+                    entity: climate.thermostat
+                    icon: phu:hive
+                    layout: horizontal
+                    secondary_info: state
+                    name: Heating
+                    show_temperature_control: false
+                    hvac_modes: []
+                    collapsible_controls: false
+                    primary_info: name
+                    card_mod:
+                      style: |
+                        ha-card {
+                          background-color: rgba(255, 255, 255, 0.05);
+                          border-radius: 14px;
+                          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+                          padding: 10px 16px;
+                          height: 70px;
+                          margin-bottom: 4px
+                          color: var(--primary-text-color);
+                        }
+                        mushroom-state-info {
+                          font-size: 14px !important;
+                          white-space: normal !important;
+                          overflow: visible !important;
+                          text-overflow: unset !important;
+                        }
+                  - type: custom:button-card
+                    entity: climate.thermostat
+                    name: ' '
+                    icon: |
+                      [[[
+                        return entity.attributes.preset_mode === 'boost' ? 'mdi:close-circle' : 'mdi:rocket-launch';
+                      ]]]
+                    tap_action:
+                      action: call-service
+                      service: climate.set_preset_mode
+                      data:
+                        entity_id: climate.thermostat
+                        preset_mode: |
+                          [[[
+                            return entity.attributes.preset_mode === 'boost' ? 'none' : 'boost';
+                          ]]]
+                    styles:
+                      card:
+                        - background-color: rgba(255, 255, 255, 0.05)
+                        - border-radius: 14px
+                        - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                        - height: 76px
+                        - width: 76px
+                        - padding: 10px
+                        - color: var(--primary-text-color)
+                        - margin-bottom: 4px
+                      icon:
+                        - width: 28px
+                        - height: 28px
+                        - color: var(--primary-text-color)
+              - type: custom:mod-card
+                card_mod:
+                  style: |
+                    :host {
+                      display: flex;
+                      justify-content: center;
+                    }
+                card:
+                  type: custom:button-card
+                  tap_action:
+                    action: none
+                  styles:
+                    card:
+                      - height: 5px
+                      - width: 380px
+                      - background-color: '#35425c'
+                      - border-radius: 50px
+                      - box-shadow: none
+                      - padding: 0
+                      - pointer-events: none
+                      - margin-bottom: 4px
+                      - margin-top: 4px
+              - type: custom:button-card
+                name: |
+                  [[[
+                    const dueDate = new Date('2025-07-12');
+                    const today = new Date();
+                    const diffTime = dueDate - today;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    return diffDays <= 0 ? "👶🏻 Baby Due! 🍼" : `👶🏻 Baby Logan due in ${diffDays} days! 🍼`;
+                  ]]]
+                show_icon: false
+                show_name: true
+                tap_action:
+                  action: none
+                styles:
+                  grid:
+                    - grid-template-areas: '''n'''
+                    - align-items: center
+                    - justify-content: center
+                  card:
+                    - background-color: rgba(255, 255, 255, 0.05)
+                    - border-radius: 14px
+                    - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                    - padding: 10px 16px
+                    - height: 70px
+                    - color: var(--primary-text-color)
+                    - margin-bottom: '-px'
+                  name:
+                    - font-size: 16px
+                    - font-weight: bold
+                    - align-self: center
+                    - justify-self: center
+              - type: horizontal-stack
+                cards:
+                  - type: conditional
+                    conditions:
+                      - entity: binary_sensor.velux_windows
+                        state: 'on'
+                    card:
+                      type: custom:button-card
+                      entity: binary_sensor.velux_windows
+                      name: Velux Open
+                      icon: mdi:window-closed-variant
+                      show_state: false
+                      show_icon: true
+                      styles:
+                        grid:
+                          - grid-template-areas: '''i n'''
+                          - grid-template-columns: 24px auto
+                          - align-items: center
+                          - justify-content: center
+                          - column-gap: 8px
+                        card:
+                          - background-color: rgba(255, 255, 255, 0.05)
+                          - border-radius: 14px
+                          - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                          - padding: 10px 16px
+                          - height: 70px
+                          - color: var(--primary-text-color)
+                        name:
+                          - font-size: 16px
+                          - font-weight: bold
+                          - align-self: center
+                          - justify-self: start
+                        icon:
+                          - width: 28px
+                          - height: 28px
+                          - align-self: center
+                          - justify-self: end
+                          - color: var(--primary-text-color)
+                  - type: conditional
+                    conditions:
+                      - condition: state
+                        entity: binary_sensor.fridge_door_contact
+                        state: 'on'
+                    card:
+                      type: custom:button-card
+                      entity: binary_sensor.fridge_door_contact
+                      name: Fridge open
+                      icon: mdi:fridge
+                      show_state: false
+                      show_icon: true
+                      styles:
+                        grid:
+                          - grid-template-areas: '''i n'''
+                          - grid-template-columns: 24px auto
+                          - align-items: center
+                          - justify-content: center
+                          - column-gap: 8px
+                        card:
+                          - background-color: rgba(255, 255, 255, 0.05)
+                          - border-radius: 14px
+                          - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                          - padding: 10px 16px
+                          - height: 70px
+                          - color: var(--primary-text-color)
+                        name:
+                          - font-size: 16px
+                          - font-weight: bold
+                          - align-self: center
+                          - justify-self: start
+                        icon:
+                          - width: 28px
+                          - height: 28px
+                          - align-self: center
+                          - justify-self: end
+                          - color: var(--primary-text-color)
+              - type: conditional
+                conditions:
+                  - entity: sensor.lights_on_count
+                    state_not: '0'
+                card:
+                  type: horizontal-stack
+                  cards:
+                    - type: custom:button-card
+                      entity: sensor.lights_on_count
+                      name: |
+                        [[[
+                          return entity.state === "1" ? "1 Light On" : `${entity.state} Lights On`;
+                        ]]]
+                      icon: mdi:lightbulb-on
+                      tap_action:
+                        action: fire-dom-event
+                        browser_mod:
+                          service: browser_mod.popup
+                          data:
+                            title: Lights On
+                            content:
+                              type: vertical-stack
+                              cards:
+                                - type: conditional
+                                  conditions:
+                                    - entity: light.bathroom_lights
+                                      state: 'on'
+                                  card:
+                                    type: horizontal-stack
+                                    cards:
+                                      - type: custom:button-card
+                                        name: Bathroom
+                                        icon: mdi:shower
+                                        tap_action:
+                                          action: none
+                                        styles:
+                                          grid:
+                                            - grid-template-areas: '''i n'''
+                                            - grid-template-columns: 24px auto
+                                            - align-items: center
+                                            - column-gap: 8px
+                                          card:
+                                            - background-color: rgba(255, 255, 255, 0.05)
+                                            - border-radius: 14px
+                                            - box-shadow: none
+                                            - padding: 10px 16px
+                                            - height: 70px
+                                            - color: var(--primary-text-color)
+                                          name:
+                                            - font-size: 16px
+                                            - font-weight: bold
+                                          icon:
+                                            - width: 24px
+                                            - height: 24px
+                                      - type: custom:button-card
+                                        icon: mdi:lightbulb-off
+                                        tap_action:
+                                          action: call-service
+                                          service: light.turn_off
+                                          service_data:
+                                            entity_id: light.bathroom_lights
+                                        styles:
+                                          card:
+                                            - background-color: rgba(255, 255, 255, 0.05)
+                                            - border-radius: 14px
+                                            - box-shadow: none
+                                            - padding: 10px
+                                            - height: 70px
+                                            - width: 70px
+                                            - color: var(--primary-text-color)
+                                          icon:
+                                            - width: 24px
+                                            - height: 24px
+                                - type: conditional
+                                  conditions:
+                                    - entity: binary_sensor.hallway_lights_on
+                                      state: 'on'
+                                  card:
+                                    type: horizontal-stack
+                                    cards:
+                                      - type: custom:button-card
+                                        name: Hallway
+                                        icon: mdi:door
+                                        tap_action:
+                                          action: none
+                                        styles:
+                                          grid:
+                                            - grid-template-areas: '''i n'''
+                                            - grid-template-columns: 24px auto
+                                            - align-items: center
+                                            - column-gap: 8px
+                                          card:
+                                            - background-color: rgba(255, 255, 255, 0.05)
+                                            - border-radius: 14px
+                                            - box-shadow: none
+                                            - padding: 10px 16px
+                                            - height: 70px
+                                            - color: var(--primary-text-color)
+                                          name:
+                                            - font-size: 16px
+                                            - font-weight: bold
+                                          icon:
+                                            - width: 24px
+                                            - height: 24px
+                                      - type: custom:button-card
+                                        icon: mdi:lightbulb-off
+                                        tap_action:
+                                          action: call-service
+                                          service: light.turn_off
+                                          service_data:
+                                            entity_id:
+                                              - light.hallway
+                                              - light.hallway_lamp_socket_1
+                                        styles:
+                                          card:
+                                            - background-color: rgba(255, 255, 255, 0.05)
+                                            - border-radius: 14px
+                                            - box-shadow: none
+                                            - padding: 10px
+                                            - height: 70px
+                                            - width: 70px
+                                            - color: var(--primary-text-color)
+                                          icon:
+                                            - width: 24px
+                                            - height: 24px
+                                - type: conditional
+                                  conditions:
+                                    - entity: binary_sensor.kitchen_lights_on
+                                      state: 'on'
+                                  card:
+                                    type: horizontal-stack
+                                    cards:
+                                      - type: custom:button-card
+                                        name: Kitchen
+                                        icon: mdi:silverware-fork-knife
+                                        tap_action:
+                                          action: none
+                                        styles:
+                                          grid:
+                                            - grid-template-areas: '''i n'''
+                                            - grid-template-columns: 24px auto
+                                            - align-items: center
+                                            - column-gap: 8px
+                                          card:
+                                            - background-color: rgba(255, 255, 255, 0.05)
+                                            - border-radius: 14px
+                                            - box-shadow: none
+                                            - padding: 10px 16px
+                                            - height: 70px
+                                            - color: var(--primary-text-color)
+                                          name:
+                                            - font-size: 16px
+                                            - font-weight: bold
+                                          icon:
+                                            - width: 24px
+                                            - height: 24px
+                                      - type: custom:button-card
+                                        icon: mdi:lightbulb-off
+                                        tap_action:
+                                          action: call-service
+                                          service: light.turn_off
+                                          service_data:
+                                            entity_id:
+                                              - light.kitchen_downlights
+                                              - light.hue_lightstrip_1
+                                        styles:
+                                          card:
+                                            - background-color: rgba(255, 255, 255, 0.05)
+                                            - border-radius: 14px
+                                            - box-shadow: none
+                                            - padding: 10px
+                                            - height: 70px
+                                            - width: 70px
+                                            - color: var(--primary-text-color)
+                                          icon:
+                                            - width: 24px
+                                            - height: 24px
+                                - type: conditional
+                                  conditions:
+                                    - entity: binary_sensor.living_room_lights_on
+                                      state: 'on'
+                                  card:
+                                    type: horizontal-stack
+                                    cards:
+                                      - type: custom:button-card
+                                        name: Living Room
+                                        icon: mdi:sofa
+                                        tap_action:
+                                          action: none
+                                        styles:
+                                          grid:
+                                            - grid-template-areas: '''i n'''
+                                            - grid-template-columns: 24px auto
+                                            - align-items: center
+                                            - column-gap: 8px
+                                          card:
+                                            - background-color: rgba(255, 255, 255, 0.05)
+                                            - border-radius: 14px
+                                            - box-shadow: none
+                                            - padding: 10px 16px
+                                            - height: 70px
+                                            - color: var(--primary-text-color)
+                                          name:
+                                            - font-size: 16px
+                                            - font-weight: bold
+                                          icon:
+                                            - width: 24px
+                                            - height: 24px
+                                      - type: custom:button-card
+                                        icon: mdi:lightbulb-off
+                                        tap_action:
+                                          action: call-service
+                                          service: light.turn_off
+                                          service_data:
+                                            entity_id:
+                                              - light.living_room_lamp_socket_1
+                                              - light.tv_lights_socket_1
+                                        styles:
+                                          card:
+                                            - background-color: rgba(255, 255, 255, 0.05)
+                                            - border-radius: 14px
+                                            - box-shadow: none
+                                            - padding: 10px
+                                            - height: 70px
+                                            - width: 70px
+                                            - color: var(--primary-text-color)
+                                          icon:
+                                            - width: 24px
+                                            - height: 24px
+                                - type: conditional
+                                  conditions:
+                                    - entity: light.sitting_room
+                                      state: 'on'
+                                  card:
+                                    type: horizontal-stack
+                                    cards:
+                                      - type: custom:button-card
+                                        name: Sitting Room
+                                        icon: mdi:seat-recline-normal
+                                        tap_action:
+                                          action: none
+                                        styles:
+                                          grid:
+                                            - grid-template-areas: '''i n'''
+                                            - grid-template-columns: 24px auto
+                                            - align-items: center
+                                            - column-gap: 8px
+                                          card:
+                                            - background-color: rgba(255, 255, 255, 0.05)
+                                            - border-radius: 14px
+                                            - box-shadow: none
+                                            - padding: 10px 16px
+                                            - height: 70px
+                                            - color: var(--primary-text-color)
+                                          name:
+                                            - font-size: 16px
+                                            - font-weight: bold
+                                          icon:
+                                            - width: 24px
+                                            - height: 24px
+                                      - type: custom:button-card
+                                        icon: mdi:lightbulb-off
+                                        tap_action:
+                                          action: call-service
+                                          service: light.turn_off
+                                          service_data:
+                                            entity_id: light.sitting_room
+                                        styles:
+                                          card:
+                                            - background-color: rgba(255, 255, 255, 0.05)
+                                            - border-radius: 14px
+                                            - box-shadow: none
+                                            - padding: 10px
+                                            - height: 70px
+                                            - width: 70px
+                                            - color: var(--primary-text-color)
+                                          icon:
+                                            - width: 24px
+                                            - height: 24px
+                      show_state: false
+                      show_icon: true
+                      styles:
+                        card:
+                          - background-color: rgba(255, 255, 255, 0.05)
+                          - border-radius: 14px
+                          - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                          - padding: 10px 16px
+                          - height: 70px
+                          - color: var(--primary-text-color)
+                        name:
+                          - font-size: 16px
+                          - font-weight: bold
+                        icon:
+                          - width: 24px
+                          - height: 24px
+                          - color: yellow
+                          - animation: pulseGlow 2s infinite ease-in-out
+                          - filter: drop-shadow(0 0 6px yellow)
+                      card_mod:
+                        style: |
+                          @keyframes pulseGlow {
+                            0% {
+                              transform: scale(1);
+                              filter: drop-shadow(0 0 4px yellow);
+                            }
+                            50% {
+                              transform: scale(1.1);
+                              filter: drop-shadow(0 0 8px yellow);
+                            }
+                            100% {
+                              transform: scale(1);
+                              filter: drop-shadow(0 0 4px yellow);
+                            }
+                          }
+                    - type: custom:button-card
+                      entity: sensor.lights_on_count
+                      name: ' '
+                      icon: mdi:lightbulb-off-outline
+                      tap_action:
+                        action: call-service
+                        service: light.turn_off
+                        data:
+                          entity_id: all
+                      styles:
+                        card:
+                          - background-color: rgba(255, 255, 255, 0.05)
+                          - border-radius: 14px
+                          - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                          - height: 70px
+                          - width: 70px
+                          - padding: 10px
+                          - color: var(--primary-text-color)
+                        icon:
+                          - width: 28px
+                          - height: 28px
+                          - color: var(--primary-text-color)
+                    - type: custom:button-card
+                      name: ' '
+                      icon: mdi:dog-side
+                      tap_action:
+                        action: call-service
+                        service: script.turn_off_all_lights_except_hallway_lamp
+                      styles:
+                        card:
+                          - background-color: rgba(255, 255, 255, 0.05)
+                          - border-radius: 14px
+                          - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                          - height: 70px
+                          - width: 70px
+                          - padding: 10px
+                          - color: var(--primary-text-color)
+                        icon:
+                          - width: 28px
+                          - height: 28px
+                          - color: var(--primary-text-color)
+          - type: custom:calendar-card-pro
+            entities:
+              - entity: calendar.smith_calendar
+                accent_color: '#F5A623'
+              - entity: calendar.uk_holiday
+                accent_color: '#00C896'
+            start_date: today
+            days_to_show: 14
+            show_empty_days: false
+            show_countdown: true
+            background_color: rgba(255, 255, 255, 0.05)
+            cardHeight: auto
+            card_mod:
+              style:
+                .: |
+                  ha-card {
+                    border-radius: 14px;
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+                    padding: 12px;
+                    color: var(--primary-text-color);
+                    background: rgba(255, 255, 255, 0.05);
+                    overflow-y: auto;
+                    max-height: 295px; /* or whatever you want */
+                  }
+                ha-card$ ha-card:
+                  background: transparent;
+                  box-shadow: none;
+      - type: grid
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: horizontal-stack
+                cards:
+                  - type: markdown
+                    content: >-
+                      **Tesla**  
+
+                      <div style="font-size: 14px; font-weight: 400; opacity:
+                      0.6; margin-top: 4px;">
+                    text_only: true
+                    card_mod:
+                      style: |
+                        ha-card {
+                          background: rgba(255, 255, 255, 0.05);
+                          border-radius: 14px;
+                          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+                          padding: 0px;
+                          margin-top: 35px;
+                          font-size: 26px;
+                          font-weight: normal;
+                          text-align: center;
+                          width: 150px
+                          color: var(--primary-text-color);
+                        }
+                  - type: custom:button-card
+                    entity: binary_sensor.tesla_status
+                    show_name: false
+                    show_state: false
+                    show_icon: false
+                    tap_action:
+                      action: call-service
+                      service: button.press
+                      data:
+                        entity_id: button.wake
+                    styles:
+                      card:
+                        - background: none
+                        - box-shadow: none
+                        - border-radius: 0px
+                        - padding: 0
+                        - height: null
+                        - width: 250px
+                        - overflow: hidden
+                      custom_fields:
+                        image:
+                          - height: auto
+                          - width: 210px
+                          - filter: |
+                              [[[
+                                return entity.state === 'on'
+                                  ? 'drop-shadow(0 8px 4px rgba(255, 255, 255, 0.15))'
+                                  : 'none';
+                              ]]]
+                    custom_fields:
+                      image: >
+                        <img src="/local/dashboardicons/tesla-final.png"
+                        style="width: 100%; height: auto;" />
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    entity: lock.lock
+                    name: |
+                      [[[
+                        return entity.state === 'locked' ? 'Unlock' : 'Lock';
+                      ]]]
+                    icon: |
+                      [[[
+                        return entity.state === 'locked' ? 'mdi:lock' : 'mdi:lock-open-variant';
+                      ]]]
+                    tap_action:
+                      action: call-service
+                      service: |
+                        [[[
+                          return entity.state === 'locked' ? 'lock.unlock' : 'lock.lock';
+                        ]]]
+                      data:
+                        entity_id: lock.lock
+                    show_state: false
+                    show_icon: true
+                    styles:
+                      grid:
+                        - grid-template-areas: '''i n'''
+                        - grid-template-columns: 24px auto
+                        - align-items: center
+                        - justify-content: center
+                        - column-gap: 8px
+                      card:
+                        - background-color: rgba(255, 255, 255, 0.05)
+                        - border-radius: 14px
+                        - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                        - padding: 10px 16px
+                        - height: 70px
+                        - color: var(--primary-text-color)
+                      name:
+                        - font-size: 16px
+                        - font-weight: bold
+                        - align-self: center
+                        - justify-self: start
+                      icon:
+                        - width: 24px
+                        - height: 24px
+                        - color: |
+                            [[[
+                              return entity.state === 'locked' ? '#00FF66' : '#FF3B3B';
+                            ]]]
+                        - align-self: center
+                        - justify-self: end
+                  - type: custom:button-card
+                    entity: cover.trunk
+                    name: |
+                      [[[
+                        return entity.state === 'open' ? 'Close Boot' : 'Open Boot';
+                      ]]]
+                    icon: phu:tesla-trunk
+                    tap_action:
+                      action: call-service
+                      service: cover.toggle
+                      data:
+                        entity_id: cover.trunk
+                    show_state: false
+                    show_icon: true
+                    styles:
+                      grid:
+                        - grid-template-areas: '''i n'''
+                        - grid-template-columns: 24px auto
+                        - align-items: center
+                        - justify-content: center
+                        - column-gap: 8px
+                      card:
+                        - background-color: rgba(255, 255, 255, 0.05)
+                        - border-radius: 14px
+                        - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                        - padding: 10px 16px
+                        - height: 70px
+                        - color: var(--primary-text-color)
+                        - animation: |
+                            [[[
+                              return entity.state === 'open' ? 'liftDrop 0.4s ease' : 'none';
+                            ]]]
+                      name:
+                        - font-size: 16px
+                        - font-weight: bold
+                        - align-self: center
+                        - justify-self: start
+                      icon:
+                        - width: 24px
+                        - height: 24px
+                        - align-self: center
+                        - justify-self: end
+                        - color: |
+                            [[[
+                              return entity.state === 'open' ? '#FFA500' : 'var(--primary-text-color)';
+                            ]]]
+                    card_mod:
+                      style: |
+                        @keyframes liftDrop {
+                          0%   { transform: translateY(0); }
+                          30%  { transform: translateY(-6px); }
+                          100% { transform: translateY(0); }
+                        }
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    entity: button.honk_horn
+                    name: Honk
+                    icon: phu:tesla-horn
+                    tap_action:
+                      action: call-service
+                      service: button.press
+                      data:
+                        entity_id: button.honk_horn
+                      haptic: medium
+                    show_state: false
+                    show_icon: true
+                    styles:
+                      grid:
+                        - grid-template-areas: '''i n'''
+                        - grid-template-columns: 24px auto
+                        - align-items: center
+                        - justify-content: center
+                        - column-gap: 8px
+                      card:
+                        - background-color: rgba(255, 255, 255, 0.05)
+                        - border-radius: 14px
+                        - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                        - padding: 10px 16px
+                        - height: 70px
+                        - color: var(--primary-text-color)
+                        - animation: |
+                            [[[
+                              (new Date() - new Date(entity.last_changed)) < 400
+                                ? "shakeCard 0.4s ease"
+                                : "none"
+                            ]]]
+                      name:
+                        - font-size: 16px
+                        - font-weight: bold
+                        - align-self: center
+                        - justify-self: start
+                      icon:
+                        - width: 24px
+                        - height: 24px
+                        - align-self: center
+                        - justify-self: end
+                        - animation: |
+                            [[[
+                              (new Date() - new Date(entity.last_changed)) < 1500
+                                ? "flashIcon 1.5s"
+                                : "none"
+                            ]]]
+                    card_mod:
+                      style: |
+                        @keyframes flashIcon {
+                          0% { color: orange; }
+                          80% { color: orange; }
+                          100% { color: var(--primary-text-color); }
+                        }
+
+                        @keyframes shakeCard {
+                          0% { transform: translateX(0); }
+                          20% { transform: translateX(-4px); }
+                          40% { transform: translateX(4px); }
+                          60% { transform: translateX(-4px); }
+                          80% { transform: translateX(4px); }
+                          100% { transform: translateX(0); }
+                        }
+                  - type: custom:button-card
+                    entity: button.flash_lights
+                    name: Flash
+                    icon: phu:tesla-flash
+                    tap_action:
+                      action: call-service
+                      service: button.press
+                      data:
+                        entity_id: button.flash_lights
+                    styles:
+                      grid:
+                        - grid-template-areas: '''i n'''
+                        - grid-template-columns: 24px auto
+                        - align-items: center
+                        - justify-content: center
+                        - column-gap: 8px
+                      card:
+                        - background-color: rgba(255, 255, 255, 0.05)
+                        - border-radius: 14px
+                        - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                        - padding: 10px 16px
+                        - height: 70px
+                        - color: var(--primary-text-color)
+                      name:
+                        - font-size: 16px
+                        - font-weight: bold
+                        - align-self: center
+                        - justify-self: start
+                      icon:
+                        - width: 24px
+                        - height: 24px
+                        - align-self: center
+                        - justify-self: end
+                        - color: var(--primary-text-color)
+                        - animation: |
+                            [[[
+                              if (entity && entity.last_changed && 
+                                  (new Date() - new Date(entity.last_changed)) < 400) {
+                                return "flashPulse 0.4s ease";
+                              } else {
+                                return "none";
+                              }
+                            ]]]
+                    card_mod:
+                      style: |
+                        @keyframes flashPulse {
+                          0% {
+                            filter: drop-shadow(0 0 2px white);
+                            transform: scale(1);
+                          }
+                          50% {
+                            filter: drop-shadow(0 0 8px white);
+                            transform: scale(1.1);
+                          }
+                          100% {
+                            filter: drop-shadow(0 0 2px white);
+                            transform: scale(1);
+                          }
+                        }
+              - type: custom:button-card
+                entity: climate.tesla
+                name: |
+                  [[[
+                    return entity.state === 'off' ? 'Preheat Car' : 'Cancel Preheat';
+                  ]]]
+                icon: |
+                  [[[
+                    return entity.state === 'off' ? 'phu:tesla-defrost' : 'phu:tesla-defrost';
+                  ]]]
+                tap_action:
+                  action: call-service
+                  service: script.toggle_tesla_preheat
+                show_state: false
+                show_icon: true
+                styles:
+                  grid:
+                    - grid-template-areas: '''i n'''
+                    - grid-template-columns: 24px auto
+                    - align-items: center
+                    - justify-content: center
+                    - column-gap: 8px
+                  card:
+                    - background-color: rgba(255, 255, 255, 0.05)
+                    - border-radius: 14px
+                    - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                    - padding: 10px 16px
+                    - height: 70px
+                    - color: var(--primary-text-color)
+                  name:
+                    - font-size: 16px
+                    - font-weight: bold
+                    - align-self: center
+                    - justify-self: start
+                  icon:
+                    - width: 26px
+                    - height: 26px
+                    - align-self: center
+                    - justify-self: end
+                    - color: |
+                        [[[
+                          return entity.state !== 'off' ? '#ff4d4d' : 'var(--primary-text-color)';
+                        ]]]
+                    - animation: |
+                        [[[
+                          return entity.state !== 'off' ? 'wiggle 0.4s infinite' : 'none';
+                        ]]]
+                card_mod:
+                  style: |
+                    @keyframes wiggle {
+                      0% { transform: rotate(0deg); }
+                      25% { transform: rotate(-7deg); }
+                      50% { transform: rotate(7deg); }
+                      75% { transform: rotate(-7deg); }
+                      100% { transform: rotate(0deg); }
+                    }
+              - type: custom:mod-card
+                card_mod:
+                  style: |
+                    :host {
+                      display: flex;
+                      justify-content: center;
+                    }
+                card:
+                  type: custom:button-card
+                  tap_action:
+                    action: none
+                  styles:
+                    card:
+                      - height: 5px
+                      - width: 380px
+                      - background-color: '#35425c'
+                      - border-radius: 50px
+                      - box-shadow: none
+                      - padding: 0
+                      - pointer-events: none
+                      - margin-bottom: 4px
+                      - margin-top: 4px
+              - type: horizontal-stack
+                cards:
+                  - type: markdown
+                    content: >-
+                      **Roborock**  
+
+                      <div style="font-size: 14px; font-weight: 400; opacity:
+                      0.6; margin-top: 4px;">
+                    text_only: true
+                    card_mod:
+                      style: |
+                        ha-card {
+                          background: rgba(255, 255, 255, 0.05);
+                          border-radius: 14px;
+                          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+                          padding: 0px;
+                          padding-left: 5px;
+                          margin-top: 35px;
+                          font-size: 26px;
+                          font-weight: normal;
+                          text-align: center;
+                          width: 150px
+                          color: var(--primary-text-color);
+                        }
+                  - type: custom:button-card
+                    entity: vacuum.q5_pro
+                    show_name: false
+                    show_state: false
+                    show_icon: false
+                    tap_action:
+                      action: none
+                    styles:
+                      card:
+                        - background: none
+                        - box-shadow: none
+                        - border-radius: 0px
+                        - padding: 0
+                        - height: null
+                        - width: 250px
+                        - overflow: hidden
+                      custom_fields:
+                        image:
+                          - height: auto
+                          - width: 120px
+                          - padding-right: 55px
+                    custom_fields:
+                      image: >
+                        <img src="/local/dashboardicons/roborock-new.png"
+                        style="width: 100%; height: auto;" />
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    entity: sensor.q5_pro_battery
+                    name: Battery
+                    tap_action:
+                      action: none
+                    show_state: true
+                    show_icon: true
+                    styles:
+                      grid:
+                        - grid-template-areas: '''i n s'''
+                        - grid-template-columns: 24px auto auto
+                        - align-items: center
+                        - justify-content: space-between
+                        - column-gap: 8px
+                      card:
+                        - background-color: rgba(255, 255, 255, 0.05)
+                        - border-radius: 14px
+                        - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                        - padding: 10px 16px
+                        - height: 70px
+                        - color: var(--primary-text-color)
+                      name:
+                        - font-size: 16px
+                        - font-weight: bold
+                        - align-self: center
+                        - justify-self: start
+                      icon:
+                        - width: 24px
+                        - height: 24px
+                        - align-self: center
+                        - justify-self: start
+                      state:
+                        - font-size: 16px
+                        - font-weight: 500
+                        - align-self: center
+                        - justify-self: end
+                    icon: |
+                      [[[
+                        const charging = states['binary_sensor.q5_pro_charging']?.state === 'on';
+                        const level = parseInt(entity.state);
+
+                        if (charging) {
+                          if (level >= 90) return 'mdi:battery-charging-90';
+                          if (level >= 80) return 'mdi:battery-charging-80';
+                          if (level >= 70) return 'mdi:battery-charging-70';
+                          if (level >= 60) return 'mdi:battery-charging-60';
+                          if (level >= 50) return 'mdi:battery-charging-50';
+                          if (level >= 40) return 'mdi:battery-charging-40';
+                          if (level >= 30) return 'mdi:battery-charging-30';
+                          if (level >= 20) return 'mdi:battery-charging-20';
+                          return 'mdi:battery-charging-10';
+                        } else {
+                          if (level >= 95) return 'mdi:battery';
+                          if (level >= 85) return 'mdi:battery-90';
+                          if (level >= 75) return 'mdi:battery-80';
+                          if (level >= 65) return 'mdi:battery-70';
+                          if (level >= 55) return 'mdi:battery-60';
+                          if (level >= 45) return 'mdi:battery-50';
+                          if (level >= 35) return 'mdi:battery-40';
+                          if (level >= 25) return 'mdi:battery-30';
+                          if (level >= 15) return 'mdi:battery-20';
+                          return 'mdi:battery-10';
+                        }
+                      ]]]
+                    style: |
+                      :host {
+                        --button-card-icon-color: [[[
+                          const level = parseInt(entity.state);
+                          const charging = states['binary_sensor.q5_pro_charging']?.state === 'on';
+                          if (charging) return '#4CAF50';
+                          if (level >= 50) return '#4CAF50';    // Green
+                          if (level >= 20) return '#FFC107';    // Amber
+                          return '#F44336';                     // Red
+                        ]]];
+                      }
+                  - type: custom:button-card
+                    entity: vacuum.q5_pro
+                    name: |
+                      [[[
+                        return entity.state === 'cleaning' ? 'Stop Cleaning' : 'Start Cleaning';
+                      ]]]
+                    icon: |
+                      [[[
+                        return entity.state === 'cleaning' ? 'phu:roborock' : 'phu:roborock';
+                      ]]]
+                    tap_action:
+                      action: call-service
+                      service: |
+                        [[[
+                          return entity.state === 'cleaning' ? 'vacuum.stop' : 'vacuum.start';
+                        ]]]
+                      data:
+                        entity_id: vacuum.q5_pro
+                    show_state: false
+                    show_icon: true
+                    styles:
+                      grid:
+                        - grid-template-areas: '''i n'''
+                        - grid-template-columns: 24px auto
+                        - align-items: center
+                        - justify-content: center
+                        - column-gap: 8px
+                      card:
+                        - background-color: rgba(255, 255, 255, 0.05)
+                        - border-radius: 14px
+                        - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                        - padding: 10px 16px
+                        - height: 70px
+                        - color: var(--primary-text-color)
+                      name:
+                        - font-size: 16px
+                        - font-weight: bold
+                        - align-self: center
+                        - justify-self: start
+                      icon:
+                        - width: 24px
+                        - height: 24px
+                        - align-self: center
+                        - justify-self: end
+                        - color: |
+                            [[[
+                              return entity.state === 'cleaning' ? '#FF9800' : 'var(--primary-text-color)';
+                            ]]]
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    entity: vacuum.q5_pro
+                    name: Return to Dock
+                    icon: mdi:home-map-marker
+                    tap_action:
+                      action: call-service
+                      service: vacuum.return_to_base
+                      data:
+                        entity_id: vacuum.q5_pro
+                    show_state: false
+                    show_icon: true
+                    styles:
+                      grid:
+                        - grid-template-areas: '''i n'''
+                        - grid-template-columns: 24px auto
+                        - align-items: center
+                        - justify-content: center
+                        - column-gap: 8px
+                      card:
+                        - background-color: rgba(255, 255, 255, 0.05)
+                        - border-radius: 14px
+                        - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                        - padding: 10px 16px
+                        - height: 70px
+                        - color: var(--primary-text-color)
+                      name:
+                        - font-size: 16px
+                        - font-weight: bold
+                        - align-self: center
+                        - justify-self: start
+                      icon:
+                        - width: 24px
+                        - height: 24px
+                        - align-self: center
+                        - justify-self: end
+                  - type: custom:button-card
+                    name: Clean a Room
+                    icon: mdi:floor-plan
+                    tap_action:
+                      action: fire-dom-event
+                      browser_mod:
+                        service: browser_mod.popup
+                        data:
+                          title: Select a Room
+                          content:
+                            type: vertical-stack
+                            cards:
+                              - type: custom:button-card
+                                name: Hallway
+                                icon: mdi:door
+                                tap_action:
+                                  action: call-service
+                                  service: vacuum.send_command
+                                  data:
+                                    entity_id: vacuum.q5_pro
+                                    command: app_segment_clean
+                                    params:
+                                      - 20
+                                hold_action:
+                                  action: call-service
+                                  service: browser_mod.close_popup
+                                styles:
+                                  grid:
+                                    - grid-template-areas: '''i n'''
+                                    - grid-template-columns: 24px auto
+                                    - align-items: center
+                                    - justify-content: center
+                                    - column-gap: 8px
+                                  card:
+                                    - background-color: rgba(255, 255, 255, 0.05)
+                                    - border-radius: 14px
+                                    - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                                    - padding: 10px 16px
+                                    - height: 70px
+                                    - color: var(--primary-text-color)
+                                  name:
+                                    - font-size: 16px
+                                    - font-weight: bold
+                                  icon:
+                                    - width: 24px
+                                    - height: 24px
+                              - type: custom:button-card
+                                name: Living Room
+                                icon: mdi:sofa
+                                tap_action:
+                                  action: call-service
+                                  service: vacuum.send_command
+                                  data:
+                                    entity_id: vacuum.q5_pro
+                                    command: app_segment_clean
+                                    params:
+                                      - 16
+                                hold_action:
+                                  action: call-service
+                                  service: browser_mod.close_popup
+                                styles:
+                                  grid:
+                                    - grid-template-areas: '''i n'''
+                                    - grid-template-columns: 24px auto
+                                    - align-items: center
+                                    - justify-content: center
+                                    - column-gap: 8px
+                                  card:
+                                    - background-color: rgba(255, 255, 255, 0.05)
+                                    - border-radius: 14px
+                                    - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                                    - padding: 10px 16px
+                                    - height: 70px
+                                    - color: var(--primary-text-color)
+                                  name:
+                                    - font-size: 16px
+                                    - font-weight: bold
+                                  icon:
+                                    - width: 24px
+                                    - height: 24px
+                              - type: custom:button-card
+                                name: Kitchen
+                                icon: mdi:silverware-fork-knife
+                                tap_action:
+                                  action: call-service
+                                  service: vacuum.send_command
+                                  data:
+                                    entity_id: vacuum.q5_pro
+                                    command: app_segment_clean
+                                    params:
+                                      - 19
+                                hold_action:
+                                  action: call-service
+                                  service: browser_mod.close_popup
+                                styles:
+                                  grid:
+                                    - grid-template-areas: '''i n'''
+                                    - grid-template-columns: 24px auto
+                                    - align-items: center
+                                    - justify-content: center
+                                    - column-gap: 8px
+                                  card:
+                                    - background-color: rgba(255, 255, 255, 0.05)
+                                    - border-radius: 14px
+                                    - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                                    - padding: 10px 16px
+                                    - height: 70px
+                                    - color: var(--primary-text-color)
+                                  name:
+                                    - font-size: 16px
+                                    - font-weight: bold
+                                  icon:
+                                    - width: 24px
+                                    - height: 24px
+                              - type: custom:button-card
+                                name: Sitting Room
+                                icon: mdi:seat-recline-normal
+                                tap_action:
+                                  action: call-service
+                                  service: vacuum.send_command
+                                  data:
+                                    entity_id: vacuum.q5_pro
+                                    command: app_segment_clean
+                                    params:
+                                      - 17
+                                hold_action:
+                                  action: call-service
+                                  service: browser_mod.close_popup
+                                styles:
+                                  grid:
+                                    - grid-template-areas: '''i n'''
+                                    - grid-template-columns: 24px auto
+                                    - align-items: center
+                                    - justify-content: center
+                                    - column-gap: 8px
+                                  card:
+                                    - background-color: rgba(255, 255, 255, 0.05)
+                                    - border-radius: 14px
+                                    - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                                    - padding: 10px 16px
+                                    - height: 70px
+                                    - color: var(--primary-text-color)
+                                  name:
+                                    - font-size: 16px
+                                    - font-weight: bold
+                                  icon:
+                                    - width: 24px
+                                    - height: 24px
+                    show_state: false
+                    show_icon: true
+                    styles:
+                      grid:
+                        - grid-template-areas: '''i n'''
+                        - grid-template-columns: 24px auto
+                        - align-items: center
+                        - justify-content: center
+                        - column-gap: 8px
+                      card:
+                        - background-color: rgba(255, 255, 255, 0.05)
+                        - border-radius: 14px
+                        - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+                        - padding: 10px 16px
+                        - height: 70px
+                        - color: var(--primary-text-color)
+                      name:
+                        - font-size: 16px
+                        - font-weight: bold
+                      icon:
+                        - width: 24px
+                        - height: 24px
+      - type: grid
+        cards:
+          - type: custom:mod-card
+            card_mod:
+              style: |
+                :host {
+                  display: flex;
+                  justify-content: left;
+                }
+            card:
+              type: custom:button-card
+              tap_action:
+                action: none
+              styles:
+                card:
+                  - height: 5px
+                  - width: 1220px
+                  - background-color: '#35425c'
+                  - border-radius: 50px
+                  - box-shadow: none
+                  - padding: 0
+                  - pointer-events: none
+                  - margin-bottom: 8px
+                  - margin-top: 8px
+        column_span: 3
+    badges:
+      - type: custom:button-card
+        name: Home
+        icon: mdi:home
+        tap_action:
+          action: navigate
+          navigation_path: /wall-panel/home
+        styles:
+          card:
+            - border-radius: 14px
+            - padding: 12px 20px
+            - background-color: rgba(255, 255, 255, 0.05)
+            - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+            - display: flex
+            - flex-direction: column
+            - justify-content: center
+            - align-items: center
+            - width: 140px
+            - height: 80px
+            - opacity: |
+                [[[
+                  return location.pathname === '/wall-panel/home' ? '1' : '0.5';
+                ]]]
+          icon:
+            - width: 32px
+            - height: 32px
+          name:
+            - font-size: 16px
+            - font-weight: 500
+            - color: inherit
+      - type: custom:button-card
+        name: Rooms
+        icon: mdi:floor-plan
+        tap_action:
+          action: navigate
+          navigation_path: /wall-panel/rooms
+        styles:
+          card:
+            - border-radius: 14px
+            - padding: 12px 20px
+            - background-color: rgba(255, 255, 255, 0.05)
+            - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+            - display: flex
+            - flex-direction: column
+            - justify-content: center
+            - align-items: center
+            - width: 140px
+            - height: 80px
+            - opacity: |
+                [[[
+                  return location.pathname === '/wall-panel/rooms' ? '1' : '0.5';
+                ]]]
+          icon:
+            - width: 32px
+            - height: 32px
+          name:
+            - font-size: 16px
+            - font-weight: 500
+            - color: inherit
+      - type: custom:button-card
+        name: Security
+        icon: mdi:shield-home
+        tap_action:
+          action: navigate
+          navigation_path: /wall-panel/security
+        styles:
+          card:
+            - border-radius: 14px
+            - padding: 12px 20px
+            - background-color: rgba(255, 255, 255, 0.05)
+            - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+            - display: flex
+            - flex-direction: column
+            - justify-content: center
+            - align-items: center
+            - width: 140px
+            - height: 80px
+            - opacity: |
+                [[[
+                  return location.pathname === '/wall-panel/security' ? '1' : '0.5';
+                ]]]
+          icon:
+            - width: 32px
+            - height: 32px
+          name:
+            - font-size: 16px
+            - font-weight: 500
+            - color: inherit
+      - type: custom:button-card
+        name: Settings
+        icon: mdi:cog
+        tap_action:
+          action: navigate
+          navigation_path: /wall-panel/settings
+        styles:
+          card:
+            - border-radius: 14px
+            - padding: 12px 20px
+            - background-color: rgba(255, 255, 255, 0.05)
+            - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+            - display: flex
+            - flex-direction: column
+            - justify-content: center
+            - align-items: center
+            - width: 140px
+            - height: 80px
+            - opacity: |
+                [[[
+                  return location.pathname === '/wall-panel/settings' ? '1' : '0.5';
+                ]]]
+          icon:
+            - width: 32px
+            - height: 32px
+          name:
+            - font-size: 16px
+            - font-weight: 500
+            - color: inherit
+    subview: true
+    cards: []
+  - type: sections
+    max_columns: 4
+    title: Rooms
+    path: rooms
+    icon: mdi:floor-plan
+    theme: swakes
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: New section
+    badges:
+      - type: custom:button-card
+        name: Home
+        icon: mdi:home
+        tap_action:
+          action: navigate
+          navigation_path: /wall-panel/home
+        styles:
+          card:
+            - border-radius: 14px
+            - padding: 12px 20px
+            - background-color: rgba(255, 255, 255, 0.05)
+            - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+            - display: flex
+            - flex-direction: column
+            - justify-content: center
+            - align-items: center
+            - width: 140px
+            - height: 80px
+            - opacity: |
+                [[[
+                  return location.pathname === '/wall-panel/home' ? '1' : '0.5';
+                ]]]
+          icon:
+            - width: 32px
+            - height: 32px
+          name:
+            - font-size: 16px
+            - font-weight: 500
+            - color: inherit
+      - type: custom:button-card
+        name: Rooms
+        icon: mdi:floor-plan
+        tap_action:
+          action: navigate
+          navigation_path: /wall-panel/rooms
+        styles:
+          card:
+            - border-radius: 14px
+            - padding: 12px 20px
+            - background-color: rgba(255, 255, 255, 0.05)
+            - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+            - display: flex
+            - flex-direction: column
+            - justify-content: center
+            - align-items: center
+            - width: 140px
+            - height: 80px
+            - opacity: |
+                [[[
+                  return location.pathname === '/wall-panel/rooms' ? '1' : '0.5';
+                ]]]
+          icon:
+            - width: 32px
+            - height: 32px
+          name:
+            - font-size: 16px
+            - font-weight: 500
+            - color: inherit
+      - type: custom:button-card
+        name: Security
+        icon: mdi:shield-home
+        tap_action:
+          action: navigate
+          navigation_path: /wall-panel/security
+        styles:
+          card:
+            - border-radius: 14px
+            - padding: 12px 20px
+            - background-color: rgba(255, 255, 255, 0.05)
+            - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+            - display: flex
+            - flex-direction: column
+            - justify-content: center
+            - align-items: center
+            - width: 140px
+            - height: 80px
+            - opacity: |
+                [[[
+                  return location.pathname === '/wall-panel/security' ? '1' : '0.5';
+                ]]]
+          icon:
+            - width: 32px
+            - height: 32px
+          name:
+            - font-size: 16px
+            - font-weight: 500
+            - color: inherit
+      - type: custom:button-card
+        name: Settings
+        icon: mdi:cog
+        tap_action:
+          action: navigate
+          navigation_path: /wall-panel/settings
+        styles:
+          card:
+            - border-radius: 14px
+            - padding: 12px 20px
+            - background-color: rgba(255, 255, 255, 0.05)
+            - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+            - display: flex
+            - flex-direction: column
+            - justify-content: center
+            - align-items: center
+            - width: 140px
+            - height: 80px
+            - opacity: |
+                [[[
+                  return location.pathname === '/wall-panel/settings' ? '1' : '0.5';
+                ]]]
+          icon:
+            - width: 32px
+            - height: 32px
+          name:
+            - font-size: 16px
+            - font-weight: 500
+            - color: inherit
+    subview: true
+    cards: []
+  - type: sections
+    max_columns: 4
+    title: Security
+    path: security
+    icon: mdi:shield-home
+    theme: swakes
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: New section
+    badges:
+      - type: custom:button-card
+        name: Home
+        icon: mdi:home
+        tap_action:
+          action: navigate
+          navigation_path: /wall-panel/home
+        styles:
+          card:
+            - border-radius: 14px
+            - padding: 12px 20px
+            - background-color: rgba(255, 255, 255, 0.05)
+            - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+            - display: flex
+            - flex-direction: column
+            - justify-content: center
+            - align-items: center
+            - width: 140px
+            - height: 80px
+            - opacity: |
+                [[[
+                  return location.pathname === '/wall-panel/home' ? '1' : '0.5';
+                ]]]
+          icon:
+            - width: 32px
+            - height: 32px
+          name:
+            - font-size: 16px
+            - font-weight: 500
+            - color: inherit
+      - type: custom:button-card
+        name: Rooms
+        icon: mdi:floor-plan
+        tap_action:
+          action: navigate
+          navigation_path: /wall-panel/rooms
+        styles:
+          card:
+            - border-radius: 14px
+            - padding: 12px 20px
+            - background-color: rgba(255, 255, 255, 0.05)
+            - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+            - display: flex
+            - flex-direction: column
+            - justify-content: center
+            - align-items: center
+            - width: 140px
+            - height: 80px
+            - opacity: |
+                [[[
+                  return location.pathname === '/wall-panel/rooms' ? '1' : '0.5';
+                ]]]
+          icon:
+            - width: 32px
+            - height: 32px
+          name:
+            - font-size: 16px
+            - font-weight: 500
+            - color: inherit
+      - type: custom:button-card
+        name: Security
+        icon: mdi:shield-home
+        tap_action:
+          action: navigate
+          navigation_path: /wall-panel/security
+        styles:
+          card:
+            - border-radius: 14px
+            - padding: 12px 20px
+            - background-color: rgba(255, 255, 255, 0.05)
+            - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+            - display: flex
+            - flex-direction: column
+            - justify-content: center
+            - align-items: center
+            - width: 140px
+            - height: 80px
+            - opacity: |
+                [[[
+                  return location.pathname === '/wall-panel/security' ? '1' : '0.5';
+                ]]]
+          icon:
+            - width: 32px
+            - height: 32px
+          name:
+            - font-size: 16px
+            - font-weight: 500
+            - color: inherit
+      - type: custom:button-card
+        name: Settings
+        icon: mdi:cog
+        tap_action:
+          action: navigate
+          navigation_path: /wall-panel/settings
+        styles:
+          card:
+            - border-radius: 14px
+            - padding: 12px 20px
+            - background-color: rgba(255, 255, 255, 0.05)
+            - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+            - display: flex
+            - flex-direction: column
+            - justify-content: center
+            - align-items: center
+            - width: 140px
+            - height: 80px
+            - opacity: |
+                [[[
+                  return location.pathname === '/wall-panel/settings' ? '1' : '0.5';
+                ]]]
+          icon:
+            - width: 32px
+            - height: 32px
+          name:
+            - font-size: 16px
+            - font-weight: 500
+            - color: inherit
+    subview: true
+    cards: []
+  - type: sections
+    max_columns: 4
+    title: Settings
+    path: settings
+    icon: mdi:cog
+    theme: swakes
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: New section
+    badges:
+      - type: custom:button-card
+        name: Home
+        icon: mdi:home
+        tap_action:
+          action: navigate
+          navigation_path: /wall-panel/home
+        styles:
+          card:
+            - border-radius: 14px
+            - padding: 12px 20px
+            - background-color: rgba(255, 255, 255, 0.05)
+            - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+            - display: flex
+            - flex-direction: column
+            - justify-content: center
+            - align-items: center
+            - width: 140px
+            - height: 80px
+            - opacity: |
+                [[[
+                  return location.pathname === '/wall-panel/home' ? '1' : '0.5';
+                ]]]
+          icon:
+            - width: 32px
+            - height: 32px
+          name:
+            - font-size: 16px
+            - font-weight: 500
+            - color: inherit
+      - type: custom:button-card
+        name: Rooms
+        icon: mdi:floor-plan
+        tap_action:
+          action: navigate
+          navigation_path: /wall-panel/rooms
+        styles:
+          card:
+            - border-radius: 14px
+            - padding: 12px 20px
+            - background-color: rgba(255, 255, 255, 0.05)
+            - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+            - display: flex
+            - flex-direction: column
+            - justify-content: center
+            - align-items: center
+            - width: 140px
+            - height: 80px
+            - opacity: |
+                [[[
+                  return location.pathname === '/wall-panel/rooms' ? '1' : '0.5';
+                ]]]
+          icon:
+            - width: 32px
+            - height: 32px
+          name:
+            - font-size: 16px
+            - font-weight: 500
+            - color: inherit
+      - type: custom:button-card
+        name: Security
+        icon: mdi:shield-home
+        tap_action:
+          action: navigate
+          navigation_path: /wall-panel/security
+        styles:
+          card:
+            - border-radius: 14px
+            - padding: 12px 20px
+            - background-color: rgba(255, 255, 255, 0.05)
+            - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+            - display: flex
+            - flex-direction: column
+            - justify-content: center
+            - align-items: center
+            - width: 140px
+            - height: 80px
+            - opacity: |
+                [[[
+                  return location.pathname === '/wall-panel/security' ? '1' : '0.5';
+                ]]]
+          icon:
+            - width: 32px
+            - height: 32px
+          name:
+            - font-size: 16px
+            - font-weight: 500
+            - color: inherit
+      - type: custom:button-card
+        name: Settings
+        icon: mdi:cog
+        tap_action:
+          action: navigate
+          navigation_path: /wall-panel/settings
+        styles:
+          card:
+            - border-radius: 14px
+            - padding: 12px 20px
+            - background-color: rgba(255, 255, 255, 0.05)
+            - box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+            - display: flex
+            - flex-direction: column
+            - justify-content: center
+            - align-items: center
+            - width: 140px
+            - height: 80px
+            - opacity: |
+                [[[
+                  return location.pathname === '/wall-panel/settings' ? '1' : '0.5';
+                ]]]
+          icon:
+            - width: 32px
+            - height: 32px
+          name:
+            - font-size: 16px
+            - font-weight: 500
+            - color: inherit
+    cards: []
+    subview: true
+  - type: panel
+    title: Calendar
+    path: calendar
+    icon: mdi:calendar-month
+    theme: swakes
+    subview: true
+    cards:
+      - type: custom:calendar-card-pro
+        name: Test Month View
+        entities:
+          - calendar.smith_calendar
+        initialView: dayGridMonth
+        cardHeight: auto
